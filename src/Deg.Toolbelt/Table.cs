@@ -18,6 +18,11 @@ namespace Deg.Toolbelt
 		public string Database { get; set; }
 		public string Name { get; set; }
 		public IList<Column> Columns { get; set; }
+		
+		public Table()
+		{
+			Columns = new List<Column>();
+		}
 	}
 	
 	public class Column

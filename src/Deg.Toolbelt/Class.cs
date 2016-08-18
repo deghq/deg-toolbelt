@@ -13,6 +13,28 @@ using System.Linq;
 
 namespace Deg.Toolbelt
 {
+	public class BaseClass : Class
+	{
+		public BaseClass(string @namespace) : base(new Table { Name = "BaseModel" }, @namespace)
+		{
+		}
+		
+		public override string ToString()
+		{
+			return string.Format(@"using System;
+	
+namespace {0}.Models
+{{
+	public class {1}
+	{{
+		public {1}()
+		{{
+		}}
+	}}
+}}", Namespace, Name);
+		}
+	}
+	
 	public class Class
 	{
 		public string Namespace { get; set; }
@@ -43,7 +65,7 @@ namespace Deg.Toolbelt
 			}
 			return string.Format(@"using System;
 	
-namespace {0}
+namespace {0}.Models
 {{
 	public class {2}
 	{{
@@ -78,7 +100,7 @@ namespace {0}
 				case "decimal":
 					return "decimal";
 				case "bit":
-					return "boolean";
+					return "bool";
 				case "image":
 					return "byte[]";
 				case "uniqueidentifier":
