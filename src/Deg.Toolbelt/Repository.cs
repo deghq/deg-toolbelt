@@ -16,16 +16,16 @@ namespace Deg.Toolbelt
 	public class Repository
 	{
 		public string Namespace { get; set; }
-		public string RepositoryName { get; set; }
-		public string FileName { get { return RepositoryName + ".cs"; }}
 		public string Name { get; set; }
+		public string FileName { get { return Name + ".cs"; }}
+		public string ModelName { get; set; }
 		Table table;
 		
 		public Repository(Table t, string @namespace)
 		{
 			this.Namespace = @namespace;
-			this.Name = t.Name;
-			this.RepositoryName = "Sql" + Name + "Repository";
+			this.ModelName = t.Name;
+			this.Name = "Sql" + ModelName + "Repository";
 			this.table = t;
 		}
 		
@@ -38,29 +38,33 @@ using System.Collections.Generic;
 	
 namespace __NAMESPACE__.Repositories
 {
-	public class __REPOSITORY_NAME__ : BaseSqlRepository<__NAME__>
+	public class __NAME__ : BaseSqlRepository<__MODEL_NAME__>
 	{
-		public __REPOSITORY_NAME__()
+		public __NAME__()
 		{
 		}
 		
-		public override void Save(__NAME__ __VARIABLE__)
+		public override void Save(__MODEL_NAME__ __VARIABLE__)
 		{
 			string query = @""
-INSERT INTO __NAME__(__COLUMNS__)
-VALUES(__PARAMETERIZED_COLUMNS__)"";
+INSERT INTO __MODEL_NAME__(
+__COLUMNS__
+)
+VALUES(
+__PARAMETERIZED_COLUMNS__
+)"";
 			ExecuteNonQuery(
 				query,
 __SQL_PARAMETERS__
 			);
 		}
 		
-		public override void Update(__NAME__ __VARIABLE__, int id)
+		public override void Update(__MODEL_NAME__ __VARIABLE__, int id)
 		{
 			string query = @""
-UPDATE __NAME__ SET
+UPDATE __MODEL_NAME__ SET
 __COLUMNS_AND_PARAMETERIZED_COLUMNS__
-WHERE __NAME__ID = @__NAME__ID"";
+WHERE __MODEL_NAME__ID = @__MODEL_NAME__ID"";
 			ExecuteNonQuery(
 				query,
 __SQL_PARAMETERS__
@@ -70,24 +74,24 @@ __SQL_PARAMETERS__
 		public override void Delete(int id)
 		{
 			string query = @""
-DELETE FROM __NAME__
-WHERE __NAME__ID = @__NAME__ID"";
+DELETE FROM __MODEL_NAME__
+WHERE __MODEL_NAME__ID = @__MODEL_NAME__ID"";
 			ExecuteNonQuery(
 				query,
-				new SqlParameter(""@__NAME__ID"", id)
+				new SqlParameter(""@__MODEL_NAME__ID"", id)
 			);
 		}
 		
-		public override __NAME__ Read(int id)
+		public override __MODEL_NAME__ Read(int id)
 		{
 			string query = @""
 SELECT __COLUMNS__
-FROM __NAME__
-WHERE __NAME__ID = @__NAME__ID"";
-			__NAME__ __VARIABLE__ = null;
-			using (var rs = ExecuteReader(query, new SqlParameter(""@__NAME__ID"", id))) {
+FROM __MODEL_NAME__
+WHERE __MODEL_NAME__ID = @__MODEL_NAME__ID"";
+			__MODEL_NAME__ __VARIABLE__ = null;
+			using (var rs = ExecuteReader(query, new SqlParameter(""@__MODEL_NAME__ID"", id))) {
 				if (rs.Read()) {
-					__VARIABLE__ = new __NAME__ {
+					__VARIABLE__ = new __MODEL_NAME__ {
 __ASSIGNED_PROPERTIES__
 					};
 				}
@@ -95,15 +99,15 @@ __ASSIGNED_PROPERTIES__
 			return __VARIABLE__;
 		}
 		
-		public override IList<__NAME__> FindAll()
+		public override IList<__MODEL_NAME__> FindAll()
 		{
 			string query = @""
 SELECT __COLUMNS__
-FROM __NAME__"";
-			var __VARIABLE__s = new List<__NAME__>();
+FROM __MODEL_NAME__"";
+			var __VARIABLE__s = new List<__MODEL_NAME__>();
 			using (var rs = ExecuteReader(query)) {
 				while (rs.Read()) {
-					__VARIABLE__s.Add(new __NAME__ {
+					__VARIABLE__s.Add(new __MODEL_NAME__ {
 __ASSIGNED_PROPERTIES__
 					});
 				}
@@ -113,30 +117,30 @@ __ASSIGNED_PROPERTIES__
 	}
 }";
 			str = str.Replace("__NAMESPACE__", Namespace);
-			str = str.Replace("__REPOSITORY_NAME__", RepositoryName);
 			str = str.Replace("__NAME__", Name);
-			str = str.Replace("__VARIABLE__", Name.ToCamelCase());
+			str = str.Replace("__MODEL_NAME__", ModelName);
+			str = str.Replace("__VARIABLE__", ModelName.ToCamelCase());
 			
 			string columns = "";
 			int i = 1;
 			foreach (var c in table.Columns) {
-				columns += c.Name;
-				columns += i++ < table.Columns.Count ? ", " : "";
+				columns += "	" + c.Name;
+				columns += i++ < table.Columns.Count ? ", " + Environment.NewLine : "";
 			}
 			str = str.Replace("__COLUMNS__", columns);
 			
 			string parameterizedColumns = "";
 			i = 1;
 			foreach (var c in table.Columns) {
-				parameterizedColumns += "@" + c.Name;
-				parameterizedColumns += i++ < table.Columns.Count ? ", " : "";
+				parameterizedColumns += "	@" + c.Name;
+				parameterizedColumns += i++ < table.Columns.Count ? ", " + Environment.NewLine : "";
 			}
 			str = str.Replace("__PARAMETERIZED_COLUMNS__", parameterizedColumns);
 			
 			string sqlParameters = "";
 			i = 1;
 			foreach (var c in table.Columns) {
-				sqlParameters += string.Format(@"				new SqlParameter(""@{0}"", {1}.{2})", c.Name, Name.ToCamelCase(), c.Name);
+				sqlParameters += string.Format(@"				new SqlParameter(""@{0}"", {1}.{2})", c.Name, ModelName.ToCamelCase(), c.Name);
 				sqlParameters += i++ < table.Columns.Count ? "," + Environment.NewLine : "";
 			}
 			str = str.Replace("__SQL_PARAMETERS__", sqlParameters);
@@ -216,27 +220,7 @@ namespace __NAMESPACE__.Repositories
 			throw new NotImplementedException();
 		}
 		
-		public virtual void SaveOrUpdate(T t)
-		{
-			throw new NotImplementedException();
-		}
-		
-		public virtual void SaveOrUpdate<U>(U t)
-		{
-			throw new NotImplementedException();
-		}
-		
 		public virtual void Delete(int id)
-		{
-			throw new NotImplementedException();
-		}
-		
-		public virtual void Delete(T t)
-		{
-			throw new NotImplementedException();
-		}
-		
-		public virtual void Delete<U>(U t)
 		{
 			throw new NotImplementedException();
 		}

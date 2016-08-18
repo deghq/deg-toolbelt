@@ -26,16 +26,21 @@ namespace Deg.Toolbelt
 			Console.WriteLine("{0} saved.", bc.Name);
 			Console.WriteLine();
 			
+			bool forceOverwrite = arguments.GetArgument("-f") != null;
 			foreach (var t in tables) {
 				Console.WriteLine("Converting table {0} to class...", t.Name);
 				var c = new Class(t, arguments.GetArgument("-n").FirstOption());
 				
-				Console.WriteLine("Writing {0}...", c.Name);
 				path = Path.Combine(Directory.GetCurrentDirectory(), c.FileName);
-				using (var w = new StreamWriter(path)) {
-					w.WriteLine(c.ToString());
+				if (!File.Exists(path) || forceOverwrite) {
+					Console.WriteLine("Writing {0}...", c.Name);
+					using (var w = new StreamWriter(path)) {
+						w.WriteLine(c.ToString());
+					}
+					Console.WriteLine("{0} saved.", c.Name);
+				} else {
+					Console.WriteLine("Unable to overwrite {0}. Please use -f argument to overwrite the content.", c.Name);
 				}
-				Console.WriteLine("{0} saved.", c.Name);
 				Console.WriteLine();
 			}
 		}
@@ -51,17 +56,24 @@ namespace Deg.Toolbelt
 			Console.WriteLine("BaseSqlRepository saved.");
 			Console.WriteLine();
 			
+			bool forceOverwrite = arguments.GetArgument("-f") != null;
 			foreach (var t in tables) {
 				Console.WriteLine("Creating repository class for table {0}...", t.Name);
 				var r = new Repository(t, arguments.GetArgument("-n").FirstOption());
+				Console.WriteLine("{0} created.", r.Name);
 				
-				Console.WriteLine("Writing {0}...", r.RepositoryName);
 				path = Path.Combine(Directory.GetCurrentDirectory(), r.FileName);
-				using (var w = new StreamWriter(path)) {
-					w.WriteLine(r.ToString());
+				if (!File.Exists(path) || forceOverwrite) {
+					Console.WriteLine("Writing {0}...", r.Name);
+					using (var w = new StreamWriter(path)) {
+						w.WriteLine(r.ToString());
+					}
+					Console.WriteLine("{0} saved.", r.Name);
+				} else {
+					Console.WriteLine("Unable to overwrite {0}. Please use -f argument to overwrite the content.", r.Name);
 				}
-				Console.WriteLine("{0} saved.", r.RepositoryName);
 				Console.WriteLine();
+				
 			}
 		}
 	}
