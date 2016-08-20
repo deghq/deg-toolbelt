@@ -48,7 +48,7 @@ namespace Deg.Toolbelt
 		public void GenerateRepositories(TableService service, List<Table> tables, Arguments arguments)
 		{
 			Console.WriteLine("Writing BaseSqlRepository...");
-			var br = new BaseRepository(arguments.GetArgument("-n").FirstOption());
+			var br = new BaseSqlRepository(arguments.GetArgument("-n").FirstOption());
 			string path = Path.Combine(Directory.GetCurrentDirectory(), br.FileName);
 			using (var w = new StreamWriter(path)) {
 				w.WriteLine(br.ToString());
@@ -59,7 +59,7 @@ namespace Deg.Toolbelt
 			bool forceOverwrite = arguments.GetArgument("-f") != null;
 			foreach (var t in tables) {
 				Console.WriteLine("Creating repository class for table {0}...", t.Name);
-				var r = new Repository(t, arguments.GetArgument("-n").FirstOption());
+				var r = new SqlRepository(t, arguments.GetArgument("-n").FirstOption());
 				Console.WriteLine("{0} created.", r.Name);
 				
 				path = Path.Combine(Directory.GetCurrentDirectory(), r.FileName);

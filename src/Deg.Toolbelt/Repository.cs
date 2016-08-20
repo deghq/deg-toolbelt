@@ -13,13 +13,13 @@ using System.Linq;
 
 namespace Deg.Toolbelt
 {
-	public class Repository
+	public abstract class Repository
 	{
 		public string Namespace { get; set; }
 		public string Name { get; set; }
 		public string FileName { get { return Name + ".cs"; }}
 		public string ModelName { get; set; }
-		Table table;
+		protected Table table;
 		
 		public Repository(Table t, string @namespace)
 		{
@@ -27,6 +27,23 @@ namespace Deg.Toolbelt
 			this.ModelName = t.Name;
 			this.Name = "Sql" + ModelName + "Repository";
 			this.table = t;
+		}
+	}
+	
+	public class SqlRepository : Repository
+	{
+//		public string Namespace { get; set; }
+//		public string Name { get; set; }
+//		public string FileName { get { return Name + ".cs"; }}
+//		public string ModelName { get; set; }
+//		protected Table table;
+		
+		public SqlRepository(Table t, string @namespace) : base(t, @namespace)
+		{
+//			this.Namespace = @namespace;
+//			this.ModelName = t.Name;
+//			this.Name = "Sql" + ModelName + "Repository";
+//			this.table = t;
 		}
 		
 		public override string ToString()
@@ -186,9 +203,9 @@ __ASSIGNED_PROPERTIES__
 		}
 	}
 	
-	public class BaseRepository : Repository
+	public class BaseSqlRepository : SqlRepository
 	{
-		public BaseRepository(string @namespace) : base(new Table { Name = "Base" }, @namespace)
+		public BaseSqlRepository(string @namespace) : base(new Table { Name = "Base" }, @namespace)
 		{
 		}
 		

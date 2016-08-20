@@ -31,6 +31,26 @@ namespace Deg.Toolbelt
 						g.GenerateRepositories(service, tables, arguments);
 					}
 				}
+			} else {
+				Console.WriteLine(
+					@"DEG toolbelt is a simple tool to generate basic model classes and repositories
+from a database table(s).
+
+  Usage:
+    deg <command> [arguments...] [options...]
+
+  Examples:
+    deg generate-classes
+    deg generate-repositories
+
+  Arguments:
+    -d  Choose the database to which generates the classes/repositories from.
+    -n  Assigns the namespace for the model or repository classes.
+    -t  Selects database table(s) separatected by space e.g. Customer Item.
+
+  Further information:
+    https://github.com/iescarro/deg-toolbelt"
+				);
 			}
 		}
 		
