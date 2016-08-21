@@ -13,13 +13,21 @@ using System.Linq;
 
 namespace Deg.Toolbelt
 {
+	public interface ITableRepository
+	{
+		List<Table> FindTables(params string[] names);
+		List<Column> FindTableColumns(string tableName);
+		List<Table> FindAllTables();
+	}
+	
 	public class TableService
 	{
-		TableRepository r;
+		ITableRepository r;
 		
-		public TableService(string database)
+		public TableService(ITableRepository r)
 		{
-			this.r = new TableRepository(database);
+//			this.r = new SqlTableRepository(database);
+			this.r = r;
 		}
 		
 		public List<Table> FindTables(params string[] names)

@@ -21,14 +21,15 @@ namespace Deg.Toolbelt
 				string command = args[0];
 				var arguments = Argument.GetArguments(args);
 				if (command.StartsWith("generate")) {
-					var g = new Generator();
-					var service = new TableService(arguments.GetArgument("-d").FirstOption());
+					var service = new TableService(new SqlTableRepository(arguments.GetArgument("-d").FirstOption()));
 					var tables = service.FindTables(arguments.GetArgument("-t").OptionsToArray());
 					
+					var g = new Generator(service, tables, arguments);
+					
 					if (command == "generate-classes") {
-						g.GenerateModels(service, tables, arguments);
+						g.GenerateModels();
 					} else if (command == "generate-repositories") {
-						g.GenerateRepositories(service, tables, arguments);
+						g.GenerateRepositories();
 					}
 				}
 			} else {
