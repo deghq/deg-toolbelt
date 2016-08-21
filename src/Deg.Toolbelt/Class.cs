@@ -20,16 +20,16 @@ namespace Deg.Toolbelt
 		public IList<Property> Properties { get; set; }
 		public abstract string FileName { get; }
 		
-		public Class(Table t) : this(t, t.Database)
+		public Class(Table table) : this(table, table.Database)
 		{
 		}
 		
-		public Class(Table t, string @namespace)
+		public Class(Table table, string @namespace)
 		{
-			Namespace = @namespace != "" ? @namespace : t.Database;
-			Name = t.Name;
+			Namespace = @namespace != "" ? @namespace : table.Database;
+			Name = table.Name.ToSingularize().ToPascalCase();
 			Properties = new List<Property>();
-			foreach (var c in t.Columns) {
+			foreach (var c in table.Columns) {
 				Properties.Add(new Property(c));
 			}
 		}
@@ -42,7 +42,7 @@ namespace Deg.Toolbelt
 		
 		public Property(Column c)
 		{
-			Name = c.Name;
+			Name = c.Name.ToPascalCase();
 			Type = GetPropertyType(c.Type);
 		}
 		
@@ -62,6 +62,8 @@ namespace Deg.Toolbelt
 					return "byte[]";
 				case "uniqueidentifier":
 					return "Guid";
+				case "double":
+					return "double";
 				default:
 					return "string";
 			}

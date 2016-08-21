@@ -21,7 +21,7 @@ namespace Deg.Toolbelt
 				string command = args[0];
 				var arguments = Argument.GetArguments(args);
 				if (command.StartsWith("generate")) {
-					var service = new TableService(new SqlTableRepository(arguments.GetArgument("-d").FirstOption()));
+					var service = new TableService(GetTableRepository(arguments.GetArgument("-sql").FirstOption(), arguments.GetArgument("-d").FirstOption()));
 					var tables = service.FindTables(arguments.GetArgument("-t").OptionsToArray());
 					
 					var g = new Generator(service, tables, arguments);
@@ -45,9 +45,10 @@ from a database table(s).
     deg generate-repositories
 
   Arguments:
-    -d  Choose the database to which generates the classes/repositories from.
-    -n  Assigns the namespace for the model or repository classes.
-    -t  Selects database table(s) separatected by space e.g. Customer Item.
+    -sql  Selects and assigns what SQL to grab the tables.
+    -d    Choose the database to which generates the classes/repositories from.
+    -n    Assigns the namespace for the model or repository classes.
+    -t    Selects database table(s) separatected by space e.g. Customer Item.
 
   Further information:
     https://github.com/iescarro/deg-toolbelt"
@@ -55,5 +56,13 @@ from a database table(s).
 			}
 		}
 		
+		static ITableRepository GetTableRepository(string sql, string database)
+		{
+			if (sql == "mysql") {
+				return new MySqlTableRepository(database);
+			} else {
+				return new SqlTableRepository(database);
+			}
+		}
 	}
 }

@@ -17,7 +17,7 @@ namespace Deg.Toolbelt
 	{
 		List<Table> FindTables(params string[] names);
 		List<Column> FindTableColumns(string tableName);
-		List<Table> FindAllTables();
+//		List<Table> FindAllTables();
 	}
 	
 	public class TableService
@@ -26,7 +26,6 @@ namespace Deg.Toolbelt
 		
 		public TableService(ITableRepository r)
 		{
-//			this.r = new SqlTableRepository(database);
 			this.r = r;
 		}
 		
@@ -44,11 +43,22 @@ namespace Deg.Toolbelt
 			}
 		}
 		
-		public List<Table> FindAllTables()
+		public Repository GetBaseRepository(string @namespace)
 		{
-			var tables = r.FindAllTables();
-			AddColumns(tables);
-			return tables;
+			if (r is MySqlTableRepository) {
+				return new BaseMySqlRepository(@namespace);
+			} else {
+				return new BaseSqlRepository(@namespace);
+			}
+		}
+		
+		public Repository GetRepository(Table t, string @namespace)
+		{
+			if (r is MySqlTableRepository) {
+				return new MySqlRepository(t, @namespace);
+			} else {
+				return new SqlRepository(t, @namespace);
+			}
 		}
 	}
 }

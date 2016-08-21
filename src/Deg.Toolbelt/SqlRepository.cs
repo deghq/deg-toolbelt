@@ -17,7 +17,7 @@ namespace Deg.Toolbelt
 	{
 		public override string Name {
 			get {
-				return "Sql" + ModelName + "Repository";
+				return "Sql" + ModelName.ToSingularize().ToPascalCase() + "Repository";
 			}
 		}
 		
@@ -43,7 +43,7 @@ namespace __NAMESPACE__.Repositories
 		public override void Save(__MODEL_NAME__ __VARIABLE__)
 		{
 			string query = @""
-INSERT INTO __MODEL_NAME__(
+INSERT INTO __TABLE_NAME__(
 __COLUMNS__
 )
 VALUES(
@@ -58,7 +58,7 @@ __SQL_PARAMETERS__
 		public override void Update(__MODEL_NAME__ __VARIABLE__, int id)
 		{
 			string query = @""
-UPDATE __MODEL_NAME__ SET
+UPDATE __TABLE_NAME__ SET
 __COLUMNS_AND_PARAMETERIZED_COLUMNS__
 WHERE __MODEL_NAME__ID = @__MODEL_NAME__ID"";
 			ExecuteNonQuery(
@@ -70,7 +70,7 @@ __SQL_PARAMETERS__
 		public override void Delete(int id)
 		{
 			string query = @""
-DELETE FROM __MODEL_NAME__
+DELETE FROM __TABLE_NAME__
 WHERE __MODEL_NAME__ID = @__MODEL_NAME__ID"";
 			ExecuteNonQuery(
 				query,
@@ -82,7 +82,7 @@ WHERE __MODEL_NAME__ID = @__MODEL_NAME__ID"";
 		{
 			string query = @""
 SELECT __COLUMNS__
-FROM __MODEL_NAME__
+FROM __TABLE_NAME__
 WHERE __MODEL_NAME__ID = @__MODEL_NAME__ID"";
 			__MODEL_NAME__ __VARIABLE__ = null;
 			using (var rs = ExecuteReader(query, new SqlParameter(""@__MODEL_NAME__ID"", id))) {
@@ -99,7 +99,7 @@ __ASSIGNED_PROPERTIES__
 		{
 			string query = @""
 SELECT __COLUMNS__
-FROM __MODEL_NAME__"";
+FROM __TABLE_NAME__"";
 			var __VARIABLE__s = new List<__MODEL_NAME__>();
 			using (var rs = ExecuteReader(query)) {
 				while (rs.Read()) {
@@ -113,9 +113,10 @@ __ASSIGNED_PROPERTIES__
 	}
 }";
 			str = str.Replace("__NAMESPACE__", Namespace);
+			str = str.Replace("__TABLE_NAME__", ModelName);
 			str = str.Replace("__NAME__", Name);
-			str = str.Replace("__MODEL_NAME__", ModelName);
-			str = str.Replace("__VARIABLE__", ModelName.ToCamelCase());
+			str = str.Replace("__MODEL_NAME__", ModelName.ToSingularize().ToPascalCase());
+			str = str.Replace("__VARIABLE__", ModelName.ToSingularize().ToCamelCase());
 			
 			string columns = "";
 			int i = 1;
@@ -136,7 +137,7 @@ __ASSIGNED_PROPERTIES__
 			string sqlParameters = "";
 			i = 1;
 			foreach (var c in table.Columns) {
-				sqlParameters += string.Format(@"				new SqlParameter(""@{0}"", {1}.{2})", c.Name, ModelName.ToCamelCase(), c.Name);
+				sqlParameters += string.Format(@"				new SqlParameter(""@{0}"", {1}.{2})", c.Name, ModelName.ToSingularize().ToCamelCase(), c.Name.ToPascalCase());
 				sqlParameters += i++ < table.Columns.Count ? "," + Environment.NewLine : "";
 			}
 			str = str.Replace("__SQL_PARAMETERS__", sqlParameters);
@@ -152,7 +153,7 @@ __ASSIGNED_PROPERTIES__
 			string assignedProperties = "";
 			i = 1;
 			foreach (var c in table.Columns) {
-				assignedProperties += string.Format(@"						{0} = {1}", c.Name, lalala(c, i));
+				assignedProperties += string.Format(@"						{0} = {1}", c.Name, GetAssigneeReader(c, i));
 				assignedProperties += i++ < table.Columns.Count ? "," + Environment.NewLine : "";
 			}
 			str = str.Replace("__ASSIGNED_PROPERTIES__", assignedProperties);
@@ -160,7 +161,7 @@ __ASSIGNED_PROPERTIES__
 			return str;
 		}
 		
-		string lalala(Column c, int i)
+		string GetAssigneeReader(Column c, int i)
 		{
 			switch (c.Type) {
 					case "int":

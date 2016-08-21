@@ -67,26 +67,6 @@ WHERE TABLE_NAME = @TableName";
 			return t;
 		}
 		
-		public List<Table> FindAllTables()
-		{
-			string query = @"
-SELECT TABLE_NAME
-FROM INFORMATION_SCHEMA.TABLES";
-			var tables = new List<Table>();
-			using (var rs = ExecuteReader(query)) {
-				while (rs.Read()) {
-					tables.Add(
-						new Table {
-							Database = con.Database,
-							Name = rs.GetString(0)
-						}
-					);
-				}
-			}
-			CloseConnection();
-			return tables;
-		}
-		
 		public List<Table> FindTables(params string[] names)
 		{
 			string parameterNames = "";

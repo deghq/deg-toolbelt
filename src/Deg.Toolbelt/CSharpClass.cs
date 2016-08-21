@@ -33,7 +33,7 @@ namespace Deg.Toolbelt
 		{
 			string properties = "";
 			foreach (var p in Properties) {
-				properties += string.Format("		public {1} {0} {{ get; set; }}", p.Name, p.Type);
+				properties += string.Format("		public {1} {0} {{ get; set; }}", p.Name.ToPascalCase(), p.Type);
 				properties += Environment.NewLine;
 			}
 			string str = @"using System;
@@ -50,7 +50,7 @@ __PROPERTIES__
 }";
 			str = str.Replace("__NAMESPACE__", Namespace);
 			str = str.Replace("__PROPERTIES__", properties);
-			str = str.Replace("__NAME__", Name);
+			str = str.Replace("__NAME__", Name.ToSingularize().ToPascalCase());
 			return str;
 		}
 	}

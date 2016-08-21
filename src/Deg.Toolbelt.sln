@@ -4,6 +4,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # SharpDevelop 4.4
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deg.Toolbelt", "Deg.Toolbelt\Deg.Toolbelt.csproj", "{B2481A02-30CD-49BD-A60C-DECAAE4E7C86}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deg.Toolbelt.Tests", "Deg.Toolbelt.Tests\Deg.Toolbelt.Tests.csproj", "{1486A10E-5840-4091-9E98-817B37DB3D9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,5 +16,9 @@ Global
 		{B2481A02-30CD-49BD-A60C-DECAAE4E7C86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B2481A02-30CD-49BD-A60C-DECAAE4E7C86}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B2481A02-30CD-49BD-A60C-DECAAE4E7C86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1486A10E-5840-4091-9E98-817B37DB3D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1486A10E-5840-4091-9E98-817B37DB3D9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1486A10E-5840-4091-9E98-817B37DB3D9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1486A10E-5840-4091-9E98-817B37DB3D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal

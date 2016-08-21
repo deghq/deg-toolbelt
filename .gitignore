@@ -1,2 +1,5 @@
 /src/Deg.Toolbelt/bin
 /src/Deg.Toolbelt/obj
+/src/packages
+/src/Deg.Toolbelt.Tests/bin
+/src/Deg.Toolbelt.Tests/obj

@@ -6,17 +6,19 @@ using MySql.Data.MySqlClient;
 
 namespace Deg.Toolbelt
 {
-	public class MySqlTableRepository
+	public class MySqlTableRepository : ITableRepository
 	{
 		MySqlConnection con;
+		string database;
 		
 		public MySqlTableRepository(string database)
 		{
 			if (database != "") {
-				con = new MySqlConnection(string.Format("Server=localhost;Database={0};Trusted_Connection=True;", database));
+				con = new MySqlConnection(string.Format("server=localhost;user id=root;database={0}", database));
 			} else {
 				con = new MySqlConnection(ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["database"]].ConnectionString);
 			}
+			this.database = con.Database;
 		}
 		
 		MySqlDataReader ExecuteReader(string query, params MySqlParameter[] parameters)
@@ -46,9 +48,11 @@ namespace Deg.Toolbelt
 			string query = @"
 SELECT TABLE_NAME
 FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_NAME = @TableName";
+WHERE TABLE_NAME = @TableName
+AND TABLE_SCHEMA = @TableSchema
+AND TABLE_TYPE = 'BASE TABLE'";
 			Table t = null;
-			using (var rs = ExecuteReader(query, new MySqlParameter("@TableName", name))) {
+			using (var rs = ExecuteReader(query, new MySqlParameter("@TableName", name), new MySqlParameter("@TableSchema", database))) {
 				if (rs.Read()) {
 					t = new Table {
 						Database = con.Database,
@@ -58,26 +62,6 @@ WHERE TABLE_NAME = @TableName";
 			}
 			CloseConnection();
 			return t;
-		}
-		
-		public List<Table> FindAllTables()
-		{
-			string query = @"
-SELECT TABLE_NAME
-FROM INFORMATION_SCHEMA.TABLES";
-			var tables = new List<Table>();
-			using (var rs = ExecuteReader(query)) {
-				while (rs.Read()) {
-					tables.Add(
-						new Table {
-							Database = con.Database,
-							Name = rs.GetString(0)
-						}
-					);
-				}
-			}
-			CloseConnection();
-			return tables;
 		}
 		
 		public List<Table> FindTables(params string[] names)
@@ -92,11 +76,13 @@ FROM INFORMATION_SCHEMA.TABLES";
 				@"
 SELECT TABLE_NAME
 FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = @TableSchema
+AND TABLE_TYPE = 'BASE TABLE'
 {0}",
-				names.Length == 0 ? "" : string.Format("WHERE TABLE_NAME IN ({0})", parameterNames)
+				names.Length == 0 ? "" : string.Format("AND TABLE_NAME IN ({0})", parameterNames)
 			);
 			var tables = new List<Table>();
-			using (var rs = ExecuteReader(query)) {
+			using (var rs = ExecuteReader(query, new MySqlParameter("@TableSchema", database))) {
 				while (rs.Read()) {
 					tables.Add(
 						new Table {
@@ -110,14 +96,15 @@ FROM INFORMATION_SCHEMA.TABLES
 			return tables;
 		}
 		
-		public IList<Column> FindTableColumns(string name)
+		public List<Column> FindTableColumns(string name)
 		{
 			string query = @"
 SELECT COLUMN_NAME, DATA_TYPE
 FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME = @TableName";
+WHERE TABLE_NAME = @TableName
+AND TABLE_SCHEMA = @TableSchema";
 			var c = new List<Column>();
-			using (var rs = ExecuteReader(query, new MySqlParameter("@TableName", name))) {
+			using (var rs = ExecuteReader(query, new MySqlParameter("@TableName", name), new MySqlParameter("@TableSchema", database))) {
 				while (rs.Read()) {
 					c.Add(
 						new Column {

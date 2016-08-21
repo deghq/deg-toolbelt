@@ -4,21 +4,55 @@
 // </file>
 
 using System;
+using System.Text;
 
 namespace Deg.Toolbelt
 {
 	public static class Helper
 	{
-		public static string ToCamelCase(this string s)
+		public static string ToCamelCase(this string str)
 		{
-			if (string.IsNullOrEmpty(s)) {
+			if (string.IsNullOrEmpty(str)) {
 				return string.Empty;
 			}
+			
+			var newString = new StringBuilder();
+			foreach (var s in str.Split('_')) {
+				char[] a = s.ToCharArray();
+				a[0] = char.ToUpper(a[0]);
+				newString.Append(new string(a));
+			}
 
-			char[] a = s.ToCharArray();
-			a[0] = char.ToLower(a[0]);
+			char[] b = newString.ToString().ToCharArray();
+			b[0] = char.ToLower(b[0]);
+			
+			return new string(b);
+		}
+		
+		public static string ToPascalCase(this string str)
+		{
+			if (string.IsNullOrEmpty(str)) {
+				return string.Empty;
+			}
+			
+			var newString = new StringBuilder();
+			foreach (var s in str.Split('_')) {
+				char[] a = s.ToCharArray();
+				a[0] = char.ToUpper(a[0]);
+				newString.Append(new string(a));
+			}
 
-			return new string(a);
+			return newString.ToString();
+		}
+		
+		public static string ToSingularize(this string str)
+		{
+			if (str.EndsWith("ies")) {
+				return str.TrimEnd(new char[] { 'i', 'e', 's' }) + "y";
+			} else if (str.EndsWith("s")) {
+				return str.TrimEnd('s');
+			}
+			return str;
 		}
 		
 		public static string FirstOption(this Argument argument)
