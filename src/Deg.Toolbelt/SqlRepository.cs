@@ -246,7 +246,7 @@ namespace __NAMESPACE__.Repositories
 		
 		protected void ExecuteNonQuery(string query, params SqlParameter[] parameters)
 		{
-			ExecuteNonQuery(query, ""SqlConnection"", parameters);
+			ExecuteNonQuery(query, """", parameters);
 		}
 		
 		protected void ExecuteNonQuery(string query, string connectionName, params SqlParameter[] parameters)
@@ -282,7 +282,7 @@ namespace __NAMESPACE__.Repositories
 		
 		protected SqlDataReader ExecuteReader(string query, params SqlParameter[] parameters)
 		{
-			return ExecuteReader(query, ""SqlConnection"", parameters);
+			return ExecuteReader(query, """", parameters);
 		}
 		
 		protected SqlDataReader ExecuteReader(string query, string connectionName, params SqlParameter[] parameters)

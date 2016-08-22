@@ -31,16 +31,20 @@ namespace Deg.Toolbelt
 				Console.WriteLine("Models directory created.");
 			}
 			
+			bool forceOverwrite = arguments.GetArgument("-f") != null;
+			
 			Console.WriteLine("Writing BaseModel...");
 			var bc = new BaseModelCSharpClass(arguments.GetArgument("-n").FirstOption());
 			string path = Path.Combine(modelsDir, bc.FileName);
-			using (var w = new StreamWriter(path)) {
-				w.WriteLine(bc.ToString());
+			if (!File.Exists(path) || forceOverwrite) {
+				using (var w = new StreamWriter(path)) {
+					w.WriteLine(bc.ToString());
+				}
+				Console.WriteLine("{0} saved.", bc.Name);
+			} else {
+				Console.WriteLine("Unable to overwrite {0}. Please use -f argument to overwrite the content.", bc.Name);
 			}
-			Console.WriteLine("{0} saved.", bc.Name);
 			Console.WriteLine();
-			
-			bool forceOverwrite = arguments.GetArgument("-f") != null;
 			
 			foreach (var t in tables) {
 				Console.WriteLine("Converting table {0} to class...", t.Name);
@@ -69,22 +73,23 @@ namespace Deg.Toolbelt
 				Console.WriteLine("Repositories directory created.");
 			}
 			
-//			Console.WriteLine("Writing BaseSqlRepository...");
-//			var br = new BaseSqlRepository(arguments.GetArgument("-n").FirstOption());
+			bool forceOverwrite = arguments.GetArgument("-f") != null;
+			
 			var br = service.GetBaseRepository(arguments.GetArgument("-n").FirstOption());
 			Console.WriteLine("Writing {0}...", br.Name);
 			string path = Path.Combine(repositoriesDir, br.FileName);
-			using (var w = new StreamWriter(path)) {
-				w.WriteLine(br.ToString());
+			if (!File.Exists(path) || forceOverwrite) {
+				using (var w = new StreamWriter(path)) {
+					w.WriteLine(br.ToString());
+				}
+				Console.WriteLine("{0} saved.", br.Name);
+			} else {
+				Console.WriteLine("Unable to overwrite {0}. Please use -f argument to overwrite the content.", br.Name);
 			}
-			Console.WriteLine("{0} saved.", br.Name);
 			Console.WriteLine();
-			
-			bool forceOverwrite = arguments.GetArgument("-f") != null;
 			
 			foreach (var t in tables) {
 				Console.WriteLine("Creating repository class for table {0}...", t.Name);
-//				var r = new SqlRepository(t, arguments.GetArgument("-n").FirstOption());
 				var r = service.GetRepository(t, arguments.GetArgument("-n").FirstOption());
 				Console.WriteLine("{0} created.", r.Name);
 				
@@ -99,7 +104,6 @@ namespace Deg.Toolbelt
 					Console.WriteLine("Unable to overwrite {0}. Please use -f argument to overwrite the content.", r.Name);
 				}
 				Console.WriteLine();
-				
 			}
 		}
 	}
