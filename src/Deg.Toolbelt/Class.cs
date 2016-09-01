@@ -53,7 +53,7 @@ namespace Deg.Toolbelt
 				case "bigint":
 					return "int";
 				case "smalldatetime":
-					return "DateTime";
+					return "DateTime?";
 				case "decimal":
 					return "decimal";
 				case "bit":
