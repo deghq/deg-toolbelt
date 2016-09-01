@@ -25,6 +25,23 @@ namespace Deg.Toolbelt
 		{
 		}
 		
+		public override string GetCreateScript()
+		{
+			string str = @"CREATE TABLE __TABLE__ (
+__COLUMNS__
+);
+";
+			str = str.Replace("__TABLE__", table.Name);
+			string columns = "";
+			int i = 1;
+			foreach (var c in table.Columns) {
+				columns += "  " + c.Name + " " + c.Type;
+				columns += i++ < table.Columns.Count ? ", " + Environment.NewLine : "";
+			}
+			str = str.Replace("__COLUMNS__", columns);
+			return str;
+		}
+		
 		public override string ToString()
 		{
 			string str = @"using System;

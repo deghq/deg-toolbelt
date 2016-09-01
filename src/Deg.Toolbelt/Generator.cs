@@ -69,8 +69,6 @@ namespace Deg.Toolbelt
 				Console.WriteLine("Repositories directory created.");
 			}
 			
-//			Console.WriteLine("Writing BaseSqlRepository...");
-//			var br = new BaseSqlRepository(arguments.GetArgument("-n").FirstOption());
 			var br = service.GetBaseRepository(arguments.GetArgument("-n").FirstOption());
 			Console.WriteLine("Writing {0}...", br.Name);
 			string path = Path.Combine(repositoriesDir, br.FileName);
@@ -84,7 +82,6 @@ namespace Deg.Toolbelt
 			
 			foreach (var t in tables) {
 				Console.WriteLine("Creating repository class for table {0}...", t.Name);
-//				var r = new SqlRepository(t, arguments.GetArgument("-n").FirstOption());
 				var r = service.GetRepository(t, arguments.GetArgument("-n").FirstOption());
 				Console.WriteLine("{0} created.", r.Name);
 				
@@ -100,6 +97,17 @@ namespace Deg.Toolbelt
 				}
 				Console.WriteLine();
 				
+			}
+		}
+		
+		public void GenerateScripts()
+		{
+			using (var w = new StreamWriter("test.sql")) {
+				foreach (var t in tables) {
+					var r = service.GetRepository(t, arguments.GetArgument("-n").FirstOption());
+					Console.WriteLine(r.GetCreateScript());
+					w.WriteLine(r.GetCreateScript());
+				}
 			}
 		}
 	}

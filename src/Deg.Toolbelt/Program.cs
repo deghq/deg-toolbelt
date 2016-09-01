@@ -30,6 +30,8 @@ namespace Deg.Toolbelt
 						g.GenerateModels();
 					} else if (command == "generate-repositories") {
 						g.GenerateRepositories();
+					} else if (command == "generate-scripts") {
+						g.GenerateScripts();
 					}
 				}
 			} else {

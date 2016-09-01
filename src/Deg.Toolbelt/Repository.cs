@@ -31,5 +31,7 @@ namespace Deg.Toolbelt
 			this.ModelName = table.Name;
 			this.table = table;
 		}
+		
+		public abstract string GetCreateScript();
 	}
 }
