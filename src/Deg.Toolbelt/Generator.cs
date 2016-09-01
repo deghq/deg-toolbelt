@@ -50,9 +50,9 @@ namespace Deg.Toolbelt
 				Console.WriteLine("Converting table {0} to class...", t.Name);
 				var c = new CSharpClass(t, arguments.GetArgument("-n").FirstOption());
 				
+				Console.WriteLine("Writing {0} class...", c.Name);
 				path = Path.Combine(modelsDir, c.FileName);
 				if (!File.Exists(path) || forceOverwrite) {
-					Console.WriteLine("Writing {0} class...", c.Name);
 					using (var w = new StreamWriter(path)) {
 						w.WriteLine(c.ToString());
 					}
@@ -93,9 +93,9 @@ namespace Deg.Toolbelt
 				var r = service.GetRepository(t, arguments.GetArgument("-n").FirstOption());
 				Console.WriteLine("{0} created.", r.Name);
 				
+				Console.WriteLine("Writing {0} class...", r.Name);
 				path = Path.Combine(repositoriesDir, r.FileName);
 				if (!File.Exists(path) || forceOverwrite) {
-					Console.WriteLine("Writing {0} class...", r.Name);
 					using (var w = new StreamWriter(path)) {
 						w.WriteLine(r.ToString());
 					}
