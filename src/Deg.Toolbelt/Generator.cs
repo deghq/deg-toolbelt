@@ -74,7 +74,7 @@ namespace Deg.Toolbelt
 			}
 			
 			bool forceOverwrite = arguments.GetArgument("-f") != null;
-			
+
 			var br = service.GetBaseRepository(arguments.GetArgument("-n").FirstOption());
 			Console.WriteLine("Writing {0}...", br.Name);
 			string path = Path.Combine(repositoriesDir, br.FileName);
@@ -104,6 +104,22 @@ namespace Deg.Toolbelt
 					Console.WriteLine("Unable to overwrite {0}. Please use -f argument to overwrite the content.", r.Name);
 				}
 				Console.WriteLine();
+			}
+		}
+		
+		public void GenerateScripts()
+		{
+			using (var w = new StreamWriter("test.sql")) {
+				foreach (var t in tables) {
+//					var r = service.GetRepository(t, arguments.GetArgument("-n").FirstOption());
+					var r = new MySqlRepository(t, arguments.GetArgument("-n").FirstOption());
+					
+					Console.WriteLine(r.GetDropScript());
+					Console.WriteLine(r.GetCreateScript());
+					
+					w.WriteLine(r.GetDropScript());
+					w.WriteLine(r.GetCreateScript());
+				}
 			}
 		}
 	}

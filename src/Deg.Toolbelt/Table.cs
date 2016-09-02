@@ -29,5 +29,12 @@ namespace Deg.Toolbelt
 	{
 		public string Name { get; set; }
 		public string Type { get; set; }
+		public int Size { get; set; }
+		public bool IsPrimaryKey { get; set; }
+		public bool IsNotNull { get; set; }
+		
+		public bool Sizable {
+			get { return Size > 0 && Type != "text"; }
+		}
 	}
 }

@@ -26,28 +26,6 @@ namespace Deg.Toolbelt
 			}
 		}
 		
-		SqlDataReader ExecuteReader(string query, params SqlParameter[] parameters)
-		{
-			var cmd = new SqlCommand(query, con);
-			OpenConnection();
-			cmd.Parameters.AddRange(parameters);
-			return cmd.ExecuteReader();
-		}
-		
-		void OpenConnection()
-		{
-			if (con.State == ConnectionState.Closed) {
-				con.Open();
-			}
-		}
-		
-		void CloseConnection()
-		{
-			if (con.State == ConnectionState.Open) {
-				con.Close();
-			}
-		}
-		
 		public Table ReadTable(string name)
 		{
 			string query = @"
@@ -79,8 +57,9 @@ WHERE TABLE_NAME = @TableName";
 				@"
 SELECT TABLE_NAME
 FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_NAME != 'dtproperties'
 {0}",
-				names.Length == 0 ? "" : string.Format("WHERE TABLE_NAME IN ({0})", parameterNames)
+				names.Length == 0 ? "" : string.Format("AND TABLE_NAME IN ({0})", parameterNames)
 			);
 			var tables = new List<Table>();
 			using (var rs = ExecuteReader(query)) {
@@ -100,7 +79,7 @@ FROM INFORMATION_SCHEMA.TABLES
 		public List<Column> FindTableColumns(string name)
 		{
 			string query = @"
-SELECT COLUMN_NAME, DATA_TYPE
+SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_NAME = @TableName";
 			var c = new List<Column>();
@@ -109,13 +88,41 @@ WHERE TABLE_NAME = @TableName";
 					c.Add(
 						new Column {
 							Name = rs.GetString(0),
-							Type = rs.GetString(1)
+							Type = rs.GetString(1),
+							Size = GetInt32(rs, 2)
 						}
 					);
 				}
 			}
 			CloseConnection();
 			return c;
+		}
+		
+		int GetInt32(SqlDataReader rs, int index)
+		{
+			return !rs.IsDBNull(index) ? rs.GetInt32(index) : 0;
+		}
+		
+		SqlDataReader ExecuteReader(string query, params SqlParameter[] parameters)
+		{
+			var cmd = new SqlCommand(query, con);
+			OpenConnection();
+			cmd.Parameters.AddRange(parameters);
+			return cmd.ExecuteReader();
+		}
+		
+		void OpenConnection()
+		{
+			if (con.State == ConnectionState.Closed) {
+				con.Open();
+			}
+		}
+		
+		void CloseConnection()
+		{
+			if (con.State == ConnectionState.Open) {
+				con.Close();
+			}
 		}
 	}
 }

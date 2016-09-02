@@ -21,8 +21,36 @@ namespace Deg.Toolbelt
 			}
 		}
 		
+		IList<string> keywords = new List<string>();
+		
 		public SqlRepository(Table table, string @namespace) : base(table, @namespace)
 		{
+			keywords.Add("Option");
+			keywords.Add("Terminated");
+			keywords.Add("User");
+		}
+		
+		public override string GetDropScript()
+		{
+			return string.Format(@"DROP TABLE IF EXISTS {0};", table.Name);
+		}
+		
+		public override string GetCreateScript()
+		{
+			string str = @"CREATE TABLE __TABLE__ (
+__COLUMNS__
+);
+";
+			str = str.Replace("__TABLE__", table.Name);
+			string columns = "";
+			int i = 1;
+			foreach (var c in table.Columns) {
+				columns += "  " + c.Name + " " + c.Type;
+				columns += c.Sizable ? "(" + c.Size + ")" : "";
+				columns += i++ < table.Columns.Count ? ", " + Environment.NewLine : "";
+			}
+			str = str.Replace("__COLUMNS__", columns);
+			return str;
 		}
 		
 		public override string ToString()

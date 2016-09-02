@@ -20,8 +20,17 @@ namespace Deg.Toolbelt
 			}
 		}
 		
+		IList<string> keywords;
+		
 		public MySqlRepository(Table table, string @namespace) : base(table, @namespace)
 		{
+			keywords = new List<string>();
+			keywords.Add("option");
+			keywords.Add("user");
+			keywords.Add("terminated");
+			keywords.Add("group");
+			keywords.Add("before");
+			keywords.Add("after");
 		}
 		
 		public override string ToString()
@@ -180,6 +189,55 @@ __ASSIGNED_PROPERTIES__
 					return string.Format("GetDouble(rs, {0})", i - 1);
 				default:
 					return string.Format("GetString(rs, {0})", i - 1);
+			}
+		}
+		
+		public override string GetDropScript()
+		{
+			return string.Format("drop table if exists {0};", GetColumnName(table.Name));
+		}
+		
+		public override string GetCreateScript()
+		{
+			string str = @"create table __TABLE__ (
+__COLUMNS__
+);
+";
+			str = str.Replace("__TABLE__", GetColumnName(table.Name));
+			string columns = "";
+			int i = 1;
+			foreach (var c in table.Columns) {
+				columns += "  " + GetColumnName(c.Name) + " " + GetColumnType(c);
+				columns += c.Sizable ? "(" + c.Size + ")" : "";
+				columns += i++ < table.Columns.Count ? ", " + Environment.NewLine : "";
+			}
+			str = str.Replace("__COLUMNS__", columns);
+			return str;
+		}
+		
+		string GetColumnName(string name)
+		{
+			foreach (var k in keywords) {
+				if (k.ToLower() == name.ToLower()) {
+					return "`" + name + "`";
+				}
+			}
+			return name;
+		}
+		
+		string GetColumnType(Column column)
+		{
+			switch (column.Type) {
+				case "nvarchar":
+				case "uniqueidentifier":
+					column.Size = 255;
+					return "varchar";
+				case "bit":
+					return "tinyint";
+				case "smalldatetime":
+					return "datetime";
+				default:
+					return column.Type;
 			}
 		}
 	}
