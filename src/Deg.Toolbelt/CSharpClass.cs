@@ -42,10 +42,11 @@ namespace __NAMESPACE__.Models
 {
 	public class __NAME__
 	{
-__PROPERTIES__
 		public __NAME__()
 		{
 		}
+		
+__PROPERTIES__
 	}
 }";
 			str = str.Replace("__NAMESPACE__", Namespace);

@@ -15,6 +15,7 @@ namespace Deg.Toolbelt
 {
 	class Program
 	{
+		[STAThread]
 		public static void Main(string[] args)
 		{
 			if (args.Length > 0) {
@@ -27,9 +28,9 @@ namespace Deg.Toolbelt
 					var g = new Generator(service, tables, arguments);
 					
 					if (command == "generate-classes") {
-						g.GenerateModels();
+						g.GenerateModels(arguments.GetArgument("-c") != null);
 					} else if (command == "generate-repositories") {
-						g.GenerateRepositories();
+						g.GenerateRepositories(arguments.GetArgument("-c") != null);
 					} else if (command == "generate-scripts") {
 						g.GenerateScripts();
 					}
@@ -51,6 +52,7 @@ from a database table(s).
     -d    Choose the database to which generates the classes/repositories from.
     -n    Assigns the namespace for the model or repository classes.
     -t    Selects database table(s) separatected by space e.g. Customer Item.
+    -c    Puts the generated class/script into the clipboard.
 
   Further information:
     https://github.com/iescarro/deg-toolbelt"
